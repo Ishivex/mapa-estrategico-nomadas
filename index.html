@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Herramienta de Mapa Estratégico (Carga Única)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            overflow: hidden;
+            font-family: 'Roboto', sans-serif;
+        }
+        .font-teko {
+            font-family: 'Teko', sans-serif;
+        }
+        canvas {
+            touch-action: none;
+            background-color: #1f2937; /* bg-gray-800 */
+        }
+        .control-btn.active {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.6); /* Sombra azul para resaltar */
+            background-color: #3b82f6; /* bg-blue-600 */
+            color: white;
+        }
+        #controls {
+            transition: transform 0.3s ease-in-out;
+        }
+        #controls::-webkit-scrollbar { width: 8px; }
+        #controls::-webkit-scrollbar-track { background: #1f2937; }
+        #controls::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
+        #controls::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-300 flex h-screen">
+
+    <div class="relative w-full h-full flex">
+        <div id="controls" class="absolute lg:relative z-20 h-full w-80 bg-gray-900/80 backdrop-blur-sm border-r border-gray-700 p-6 flex-shrink-0 transform flex flex-col space-y-4 overflow-y-auto">
+            <div class="text-center pb-4 border-b border-gray-700">
+                <h1 class="font-teko text-4xl font-bold tracking-widest text-white uppercase">NÓMADAS</h1>
+                <p class="font-teko text-lg text-yellow-400">Panel Estratégico</p>
+            </div>
+            
+            <div class="space-y-3">
+                <h2 class="font-teko text-2xl tracking-wider text-white">MAPA</h2>
+                <!-- IMPORTANTE: Este botón ahora reemplaza el mapa actual -->
+                <label for="map-upload" class="control-btn w-full p-3 bg-gray-800 rounded-lg shadow-md hover:bg-gray-700 transition flex items-center justify-center cursor-pointer text-center">
+                    <span>Reemplazar Mapa</span>
+                    <input type="file" id="map-upload" class="hidden" accept="image/*">
+                </label>
+            </div>
+
+            <hr class="border-gray-700"/>
+
+            <div class="space-y-4">
+                <h2 class="font-teko text-2xl tracking-wider text-white">UNIDADES</h2>
+                <div>
+                    <h3 class="font-teko text-xl text-gray-400 mb-2">Equipo</h3>
+                    <div id="team-selection" class="grid grid-cols-5 gap-2">
+                        <button class="team-btn control-btn active aspect-square bg-red-600 rounded-lg shadow-md hover:bg-red-500 transition" data-team="team1" title="Equipo 1"></button>
+                        <button class="team-btn control-btn aspect-square bg-blue-600 rounded-lg shadow-md hover:bg-blue-500 transition" data-team="team2" title="Equipo 2"></button>
+                        <button class="team-btn control-btn aspect-square bg-green-600 rounded-lg shadow-md hover:bg-green-500 transition" data-team="team3" title="Equipo 3"></button>
+                        <button class="team-btn control-btn aspect-square bg-yellow-500 rounded-lg shadow-md hover:bg-yellow-400 transition" data-team="team4" title="Equipo 4"></button>
+                        <button class="team-btn control-btn aspect-square bg-purple-600 rounded-lg shadow-md hover:bg-purple-500 transition" data-team="team5" title="Equipo 5"></button>
+                        <button class="team-btn control-btn aspect-square bg-cyan-500 rounded-lg shadow-md hover:bg-cyan-400 transition col-span-5" data-team="objective" title="Objetivo"></button>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-teko text-xl text-gray-400 mb-2">Rol Táctico</h3>
+                    <div id="role-selection" class="grid grid-cols-4 gap-2">
+                         <button class="role-btn control-btn active flex items-center justify-center p-3 bg-gray-800 rounded-lg shadow-md hover:bg-gray-700 transition" data-role="espada" title="Ataque">
+                            <svg class="pointer-events-none" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5l-5-5 5-5m-5 5h10"></path></svg>
+                        </button>
+                        <button class="role-btn control-btn flex items-center justify-center p-3 bg-gray-800 rounded-lg shadow-md hover:bg-gray-700 transition" data-role="escudo" title="Defensa">
+                             <svg class="pointer-events-none" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        </button>
+                        <button class="role-btn control-btn flex items-center justify-center p-3 bg-gray-800 rounded-lg shadow-md hover:bg-gray-700 transition" data-role="estrella" title="Especial">
+                             <svg class="pointer-events-none" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        </button>
+                        <button class="role-btn control-btn flex items-center justify-center p-3 bg-gray-800 rounded-lg shadow-md hover:bg-gray-700 transition" data-role="bandera" title="Objetivo">
+                            <svg class="pointer-events-none" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="border-gray-700"/>
+
+            <div>
+                 <h2 class="font-teko text-2xl tracking-wider text-white">ACCIONES</h2>
+                 <div id="tool-selection" class="grid grid-cols-2 gap-3">
+                    <button class="tool-btn control-btn active flex items-center justify-center space-x-2 w-full p-3 bg-gray-800 rounded-lg shadow-md hover:bg-gray-700 transition" data-tool="add"><span class="pointer-events-none">Añadir</span></button>
+                    <button class="tool-btn control-btn flex items-center justify-center space-x-2 w-full p-3 bg-gray-800 rounded-lg shadow-md hover:bg-gray-700 transition" data-tool="arrow"><span class="pointer-events-none">Ruta</span></button>
+                    <button class="tool-btn control-btn flex items-center justify-center space-x-2 w-full p-3 bg-gray-800 rounded-lg shadow-md hover:bg-gray-700 transition" data-tool="move"><span class="pointer-events-none">Mover</span></button>
+                    <button class="tool-btn control-btn flex items-center justify-center space-x-2 w-full p-3 bg-gray-800 rounded-lg shadow-md hover:bg-gray-700 transition" data-tool="erase"><span class="pointer-events-none">Borrar</span></button>
+                    <button id="clearAll" class="col-span-2 w-full p-3 bg-red-800/80 text-white rounded-lg shadow-md hover:bg-red-700 transition font-bold">LIMPIAR TODO</button>
+                 </div>
+            </div>
+        </div>
+        
+        <div id="map-container" class="flex-grow h-full bg-gray-800 flex items-center justify-center relative">
+            <button id="panel-toggle" class="absolute z-30 top-1/2 -translate-y-1/2 left-0 bg-gray-900/80 text-white p-2 rounded-r-lg shadow-lg hover:bg-gray-700 transition">
+                <svg id="panel-toggle-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                </svg>
+            </button>
+            <canvas id="mapCanvas" class="rounded-lg shadow-2xl"></canvas>
+            <p id="placeholder-text" class="font-teko text-4xl text-gray-500 absolute tracking-wider">CARGANDO MAPA...</p>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- DOM Elements ---
+        const canvas = document.getElementById('mapCanvas');
+        const ctx = canvas.getContext('2d');
+        const placeholderText = document.getElementById('placeholder-text');
+        const clearAllButton = document.getElementById('clearAll');
+        const panelToggle = document.getElementById('panel-toggle');
+        const panelToggleIcon = document.getElementById('panel-toggle-icon');
+        const controlsPanel = document.getElementById('controls');
+        const mapContainer = document.getElementById('map-container');
+        const mapUpload = document.getElementById('map-upload');
+
+        // ¡REEMPLAZA ESTA URL! Pon aquí el enlace a tu mapa gigante por defecto.
+        // Puedes subir la imagen a un servicio como Imgur y pegar el enlace directo aquí.
+        const defaultMapUrl = 'https://imgur.com/M8IPbHE'; 
+
+        // --- State Variables ---
+        let mapImage = null;
+        let pieces = [];
+        let arrows = [];
+        let currentTool = 'add';
+        let currentTeam = 'team1';
+        let currentRole = 'espada';
+        
+        let isDraggingPiece = false;
+        let draggedPieceIndex = -1;
+        
+        let isDrawingArrow = false;
+
+        let scale = 1.0;
+        let viewOffset = { x: 0, y: 0 };
+        let isPanning = false;
+        let panStart = { x: 0, y: 0 };
+
+        let isPanelVisible = true;
+        let animationFrameId;
+
+        // --- Configuration ---
+        const pieceConfig = {
+            radius: 15,
+            stroke: 'rgba(255, 255, 255, 0.9)',
+            lineWidth: 2,
+            teamColors: {
+                team1: 'rgba(220, 38, 38, 1)',
+                team2: 'rgba(37, 99, 235, 1)',
+                team3: 'rgba(22, 163, 74, 1)',
+                team4: 'rgba(234, 179, 8, 1)',
+                team5: 'rgba(139, 92, 246, 1)',
+                objective: 'rgba(6, 182, 212, 1)',
+            },
+            roleShapes: {
+                espada: 'sword',
+                escudo: 'shield',
+                estrella: 'star',
+                bandera: 'flag'
+            }
+        };
+        
+        // --- Map Loading ---
+        mapUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    loadMapFromSource(event.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function loadMapFromSource(source) {
+            placeholderText.textContent = `Cargando mapa...`;
+            placeholderText.style.display = 'block';
+            canvas.style.display = 'none';
+
+            mapImage = new Image();
+            mapImage.onload = () => {
+                placeholderText.style.display = 'none';
+                canvas.style.display = 'block';
+                
+                const canvasRatio = canvas.width / canvas.height;
+                const mapRatio = mapImage.width / mapImage.height;
+
+                if (mapRatio > canvasRatio) {
+                    scale = canvas.width / mapImage.width;
+                } else {
+                    scale = canvas.height / mapImage.height;
+                }
+
+                viewOffset.x = (canvas.width - mapImage.width * scale) / 2;
+                viewOffset.y = (canvas.height - mapImage.height * scale) / 2;
+                
+                pieces = [];
+                arrows = [];
+
+                if(animationFrameId) cancelAnimationFrame(animationFrameId);
+                animate();
+            };
+            mapImage.onerror = () => {
+                placeholderText.textContent = `Error al cargar el mapa.`;
+            };
+            mapImage.src = source;
+        }
+
+
+        function animate() {
+            draw();
+            animationFrameId = requestAnimationFrame(animate);
+        }
+
+        function draw() {
+            ctx.save();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.translate(viewOffset.x, viewOffset.y);
+            ctx.scale(scale, scale);
+
+            if (mapImage) {
+                ctx.drawImage(mapImage, 0, 0, mapImage.width, mapImage.height);
+            }
+            
+            arrows.forEach(arrow => {
+                drawArrow(arrow.start, arrow.end, pieceConfig.teamColors[arrow.team], 4 / scale);
+            });
+
+            const pulseAmount = Math.abs(Math.sin(Date.now() / 250)) * 10;
+            const pieceRadius = pieceConfig.radius / scale;
+            const pieceLineWidth = pieceConfig.lineWidth / scale;
+            
+            pieces.forEach(piece => {
+                const [team, role] = piece.type.split('-');
+                ctx.fillStyle = pieceConfig.teamColors[team];
+                ctx.strokeStyle = pieceConfig.stroke;
+                ctx.lineWidth = pieceLineWidth * 1.5;
+                ctx.shadowBlur = pulseAmount;
+                ctx.shadowColor = pieceConfig.teamColors[team];
+
+                const shape = pieceConfig.roleShapes[role];
+                
+                ctx.beginPath();
+                if (shape === 'sword') drawSword(piece.x, piece.y, pieceRadius);
+                else if (shape === 'shield') drawShield(piece.x, piece.y, pieceRadius);
+                else if (shape === 'star') drawStar(piece.x, piece.y, 5, pieceRadius, pieceRadius / 2);
+                else if (shape === 'flag') drawFlag(piece.x, piece.y, pieceRadius);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.shadowBlur = 0; // Reset shadow for next element
+            });
+
+            ctx.restore();
+        }
+        
+        // --- Drawing Helpers ---
+        function drawArrow(start, end, color, lineWidth) {
+            const headlen = 10 / scale;
+            const dx = end.x - start.x;
+            const dy = end.y - start.y;
+            const angle = Math.atan2(dy, dx);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = lineWidth;
+            ctx.beginPath();
+            ctx.moveTo(start.x, start.y);
+            ctx.lineTo(end.x, end.y);
+            ctx.lineTo(end.x - headlen * Math.cos(angle - Math.PI / 6), end.y - headlen * Math.sin(angle - Math.PI / 6));
+            ctx.moveTo(end.x, end.y);
+            ctx.lineTo(end.x - headlen * Math.cos(angle + Math.PI / 6), end.y - headlen * Math.sin(angle + Math.PI / 6));
+            ctx.stroke();
+        }
+
+        function drawSword(cx, cy, r) {
+            const hiltWidth = r * 0.4;
+            const bladeLength = r * 0.6;
+            ctx.moveTo(cx - hiltWidth, cy + hiltWidth);
+            ctx.lineTo(cx + hiltWidth, cy - hiltWidth);
+            ctx.moveTo(cx - bladeLength / 2, cy - bladeLength / 2);
+            ctx.lineTo(cx + bladeLength / 2, cy + bladeLength / 2);
+        }
+        
+        function drawShield(cx, cy, r) {
+            ctx.moveTo(cx - r, cy - r);
+            ctx.lineTo(cx + r, cy - r);
+            ctx.lineTo(cx + r, cy);
+            ctx.lineTo(cx, cy + r);
+            ctx.lineTo(cx - r, cy);
+            ctx.closePath();
+        }
+        
+        function drawStar(cx, cy, spikes, outerRadius, innerRadius) {
+            let rot = Math.PI / 2 * 3;
+            let x = cx;
+            let y = cy;
+            let step = Math.PI / spikes;
+            ctx.moveTo(cx, cy - outerRadius);
+            for (let i = 0; i < spikes; i++) {
+                x = cx + Math.cos(rot) * outerRadius;
+                y = cy + Math.sin(rot) * outerRadius;
+                ctx.lineTo(x, y);
+                rot += step;
+                x = cx + Math.cos(rot) * innerRadius;
+                y = cy + Math.sin(rot) * innerRadius;
+                ctx.lineTo(x, y);
+                rot += step;
+            }
+            ctx.lineTo(cx, cy - outerRadius);
+            ctx.closePath();
+        }
+        
+        function drawFlag(cx, cy, r) {
+            const poleHeight = r * 1.5;
+            const flagWidth = r * 1.2;
+            const flagHeight = r * 0.8;
+            ctx.moveTo(cx, cy + poleHeight / 2);
+            ctx.lineTo(cx, cy - poleHeight / 2);
+            ctx.lineTo(cx + flagWidth, cy - poleHeight / 2 + flagHeight / 2);
+            ctx.lineTo(cx, cy - poleHeight / 2 + flagHeight);
+            ctx.closePath();
+        }
+
+        // --- UI Event Handlers ---
+        panelToggle.addEventListener('click', () => {
+            isPanelVisible = !isPanelVisible;
+            controlsPanel.classList.toggle('-translate-x-full');
+            panelToggleIcon.innerHTML = isPanelVisible ? 
+                `<path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>` : 
+                `<path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>`;
+            setTimeout(resizeCanvas, 310);
+        });
+
+        document.querySelectorAll('.control-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                if (e.currentTarget.id === 'map-upload-label') return;
+                const parentGroup = e.currentTarget.closest('div.grid');
+                if (parentGroup) {
+                    parentGroup.querySelectorAll('.control-btn').forEach(b => b.classList.remove('active'));
+                    e.currentTarget.classList.add('active');
+                }
+            });
+        });
+
+        document.querySelectorAll('.tool-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                currentTool = e.currentTarget.dataset.tool;
+                updateCursor();
+            });
+        });
+
+        document.querySelectorAll('.team-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => currentTeam = e.currentTarget.dataset.team);
+        });
+
+        document.querySelectorAll('.role-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => currentRole = e.currentTarget.dataset.role);
+        });
+        
+        clearAllButton.addEventListener('click', () => {
+            pieces = [];
+            arrows = [];
+            if(mapImage) draw();
+        });
+        
+        function updateCursor() {
+            if (currentTool === 'move') canvas.style.cursor = 'grab';
+            else if (currentTool === 'erase' || currentTool === 'arrow') canvas.style.cursor = 'crosshair';
+            else canvas.style.cursor = 'pointer';
+        }
+
+        // --- Canvas Interaction ---
+        function getMouseWorldPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: (clientX - rect.left - viewOffset.x) / scale,
+                y: (clientY - rect.top - viewOffset.y) / scale
+            };
+        }
+
+        function findPieceAt(worldX, worldY) {
+            const hitRadius = pieceConfig.radius / scale;
+            for (let i = pieces.length - 1; i >= 0; i--) {
+                const dist = Math.sqrt((worldX - pieces[i].x)**2 + (worldY - pieces[i].y)**2);
+                if (dist < hitRadius) return i;
+            }
+            return -1;
+        }
+
+        function handleStart(e) {
+            if (!mapImage) return;
+            e.preventDefault();
+            const { x: worldX, y: worldY } = getMouseWorldPos(e);
+            const pieceIndex = findPieceAt(worldX, worldY);
+
+            if (currentTool === 'move') {
+                if (pieceIndex !== -1) {
+                    isDraggingPiece = true;
+                    draggedPieceIndex = pieceIndex;
+                } else {
+                    isPanning = true;
+                    canvas.style.cursor = 'grabbing';
+                    panStart = { 
+                        x: e.touches ? e.touches[0].clientX : e.clientX, 
+                        y: e.touches ? e.touches[0].clientY : e.clientY 
+                    };
+                }
+            } else if (currentTool === 'erase') {
+                if (pieceIndex !== -1) pieces.splice(pieceIndex, 1);
+            } else if (currentTool === 'add') {
+                pieces.push({ x: worldX, y: worldY, type: `${currentTeam}-${currentRole}` });
+            } else if (currentTool === 'arrow') {
+                isDrawingArrow = true;
+                arrows.push({ start: {x: worldX, y: worldY}, end: {x: worldX, y: worldY}, team: currentTeam });
+            }
+        }
+
+        function handleMove(e) {
+            if (!mapImage) return;
+            e.preventDefault();
+            const { x: worldX, y: worldY } = getMouseWorldPos(e);
+            
+            if (isDraggingPiece) {
+                pieces[draggedPieceIndex].x = worldX;
+                pieces[draggedPieceIndex].y = worldY;
+            } else if (isPanning) {
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                viewOffset.x += clientX - panStart.x;
+                viewOffset.y += clientY - panStart.y;
+                panStart = { x: clientX, y: clientY };
+            } else if (isDrawingArrow) {
+                arrows[arrows.length - 1].end = { x: worldX, y: worldY };
+            }
+        }
+
+        function handleEnd(e) {
+            if (!mapImage) return;
+            e.preventDefault();
+            isDraggingPiece = false;
+            isPanning = false;
+            isDrawingArrow = false;
+            draggedPieceIndex = -1;
+            updateCursor();
+        }
+
+        canvas.addEventListener('wheel', e => {
+            if (!mapImage) return;
+            e.preventDefault();
+            const zoomIntensity = 0.1;
+            const wheel = e.deltaY < 0 ? 1 : -1;
+            const zoom = Math.exp(wheel * zoomIntensity);
+            
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            const mouseWorldX = (mouseX - viewOffset.x) / scale;
+            const mouseWorldY = (mouseY - viewOffset.y) / scale;
+            
+            const newScale = Math.max(0.1, Math.min(scale * zoom, 10));
+
+            viewOffset.x = mouseX - mouseWorldX * newScale;
+            viewOffset.y = mouseY - mouseWorldY * newScale;
+            scale = newScale;
+        });
+
+        // --- Mouse & Touch Listeners ---
+        canvas.addEventListener('mousedown', handleStart);
+        canvas.addEventListener('mousemove', handleMove);
+        canvas.addEventListener('mouseup', handleEnd);
+        canvas.addEventListener('mouseout', handleEnd);
+        canvas.addEventListener('touchstart', handleStart, { passive: false });
+        canvas.addEventListener('touchmove', handleMove, { passive: false });
+        canvas.addEventListener('touchend', handleEnd);
+        canvas.addEventListener('touchcancel', handleEnd);
+
+        // --- Window & Init ---
+        function resizeCanvas() {
+            if (!mapContainer) return;
+            canvas.width = mapContainer.clientWidth;
+            canvas.height = mapContainer.clientHeight;
+            if (mapImage) draw();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        updateCursor();
+
+        // Cargar el mapa por defecto al iniciar la aplicación
+        loadMapFromSource(defaultMapUrl);
+
+        // Deshabilitar menú contextual
+        document.addEventListener('contextmenu', event => event.preventDefault());
+    });
+    </script>
+</body>
+</html>
