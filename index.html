@@ -38,7 +38,8 @@
 <body class="bg-gray-900 text-gray-300 flex h-screen">
 
     <div class="relative w-full h-full flex">
-        <div id="controls" class="absolute lg:relative z-20 h-full w-80 bg-gray-900/80 backdrop-blur-sm border-r border-gray-700 p-6 flex-shrink-0 transform flex flex-col space-y-4 overflow-y-auto">
+        <!-- Panel de control más compacto (w-72) -->
+        <div id="controls" class="absolute lg:relative z-20 h-full w-72 bg-gray-900/80 backdrop-blur-sm border-r border-gray-700 p-6 flex-shrink-0 transform flex flex-col space-y-4 overflow-y-auto">
             <div class="text-center pb-4 border-b border-gray-700">
                 <h1 class="font-teko text-4xl font-bold tracking-widest text-white uppercase">NÓMADAS</h1>
                 <p class="font-teko text-lg text-yellow-400">Panel Estratégico</p>
@@ -46,7 +47,6 @@
             
             <div class="space-y-3">
                 <h2 class="font-teko text-2xl tracking-wider text-white">MAPA</h2>
-                <!-- IMPORTANTE: Este botón ahora reemplaza el mapa actual -->
                 <label for="map-upload" class="control-btn w-full p-3 bg-gray-800 rounded-lg shadow-md hover:bg-gray-700 transition flex items-center justify-center cursor-pointer text-center">
                     <span>Reemplazar Mapa</span>
                     <input type="file" id="map-upload" class="hidden" accept="image/*">
@@ -59,13 +59,20 @@
                 <h2 class="font-teko text-2xl tracking-wider text-white">UNIDADES</h2>
                 <div>
                     <h3 class="font-teko text-xl text-gray-400 mb-2">Equipo</h3>
-                    <div id="team-selection" class="grid grid-cols-5 gap-2">
+                    <!-- Cuadrícula de equipos completa (4x3) -->
+                    <div id="team-selection" class="grid grid-cols-4 gap-2">
                         <button class="team-btn control-btn active aspect-square bg-red-600 rounded-lg shadow-md hover:bg-red-500 transition" data-team="team1" title="Equipo 1"></button>
                         <button class="team-btn control-btn aspect-square bg-blue-600 rounded-lg shadow-md hover:bg-blue-500 transition" data-team="team2" title="Equipo 2"></button>
                         <button class="team-btn control-btn aspect-square bg-green-600 rounded-lg shadow-md hover:bg-green-500 transition" data-team="team3" title="Equipo 3"></button>
                         <button class="team-btn control-btn aspect-square bg-yellow-500 rounded-lg shadow-md hover:bg-yellow-400 transition" data-team="team4" title="Equipo 4"></button>
                         <button class="team-btn control-btn aspect-square bg-purple-600 rounded-lg shadow-md hover:bg-purple-500 transition" data-team="team5" title="Equipo 5"></button>
-                        <button class="team-btn control-btn aspect-square bg-cyan-500 rounded-lg shadow-md hover:bg-cyan-400 transition col-span-5" data-team="objective" title="Objetivo"></button>
+                        <button class="team-btn control-btn aspect-square bg-orange-500 rounded-lg shadow-md hover:bg-orange-400 transition" data-team="team6" title="Equipo 6"></button>
+                        <button class="team-btn control-btn aspect-square bg-pink-500 rounded-lg shadow-md hover:bg-pink-400 transition" data-team="team7" title="Equipo 7"></button>
+                        <button class="team-btn control-btn aspect-square bg-gray-200 rounded-lg shadow-md hover:bg-gray-300 transition" data-team="team8" title="Equipo 8"></button>
+                        <button class="team-btn control-btn aspect-square bg-black border-2 border-gray-600 rounded-lg shadow-md hover:bg-gray-800 transition" data-team="team9" title="Equipo 9 (Negro)"></button>
+                        <button class="team-btn control-btn aspect-square bg-yellow-300 rounded-lg shadow-md hover:bg-yellow-200 transition" data-team="team10" title="Equipo 10 (Dorado)"></button>
+                        <button class="team-btn control-btn aspect-square bg-gray-400 rounded-lg shadow-md hover:bg-gray-500 transition" data-team="team11" title="Equipo 11 (Plateado)"></button>
+                        <button class="team-btn control-btn aspect-square bg-cyan-500 rounded-lg shadow-md hover:bg-cyan-400 transition" data-team="objective" title="Objetivo"></button>
                     </div>
                 </div>
                 <div>
@@ -109,6 +116,11 @@
             </button>
             <canvas id="mapCanvas" class="rounded-lg shadow-2xl"></canvas>
             <p id="placeholder-text" class="font-teko text-4xl text-gray-500 absolute tracking-wider">CARGANDO MAPA...</p>
+            <!-- Ayuda visual para la navegación del mapa -->
+            <div id="map-hint" class="absolute bottom-4 right-4 bg-gray-900/50 text-white text-sm px-3 py-2 rounded-lg backdrop-blur-sm pointer-events-none hidden">
+                <p><strong>Rueda del ratón:</strong> Zoom</p>
+                <p><strong>Arrastrar mapa:</strong> Mover</p>
+            </div>
         </div>
     </div>
 
@@ -124,6 +136,7 @@
         const controlsPanel = document.getElementById('controls');
         const mapContainer = document.getElementById('map-container');
         const mapUpload = document.getElementById('map-upload');
+        const mapHint = document.getElementById('map-hint');
 
         // ¡REEMPLAZA ESTA URL! Pon aquí el enlace a tu mapa gigante por defecto.
         // Puedes subir la imagen a un servicio como Imgur y pegar el enlace directo aquí.
@@ -161,6 +174,12 @@
                 team3: 'rgba(22, 163, 74, 1)',
                 team4: 'rgba(234, 179, 8, 1)',
                 team5: 'rgba(139, 92, 246, 1)',
+                team6: 'rgba(249, 115, 22, 1)', // Orange
+                team7: 'rgba(236, 72, 153, 1)', // Pink
+                team8: 'rgba(229, 231, 235, 1)', // White/Light Gray
+                team9: 'rgba(17, 24, 39, 1)',     // Black
+                team10: 'rgba(252, 211, 77, 1)',  // Gold
+                team11: 'rgba(156, 163, 175, 1)', // Silver
                 objective: 'rgba(6, 182, 212, 1)',
             },
             roleShapes: {
@@ -187,11 +206,13 @@
             placeholderText.textContent = `Cargando mapa...`;
             placeholderText.style.display = 'block';
             canvas.style.display = 'none';
+            mapHint.classList.add('hidden');
 
             mapImage = new Image();
             mapImage.onload = () => {
                 placeholderText.style.display = 'none';
                 canvas.style.display = 'block';
+                mapHint.classList.remove('hidden');
                 
                 const canvasRatio = canvas.width / canvas.height;
                 const mapRatio = mapImage.width / mapImage.height;
@@ -507,5 +528,4 @@
     });
     </script>
 </body>
-
 </html>
