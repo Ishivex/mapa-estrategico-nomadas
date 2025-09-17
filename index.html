@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Herramienta de Mapa Estratégico (Carga Única)</title>
+    <title>Herramienta de Mapa Estratégico (Carga Local)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -38,7 +38,6 @@
 <body class="bg-gray-900 text-gray-300 flex h-screen">
 
     <div class="relative w-full h-full flex">
-        <!-- Panel de control más compacto (w-72) -->
         <div id="controls" class="absolute lg:relative z-20 h-full w-72 bg-gray-900/80 backdrop-blur-sm border-r border-gray-700 p-6 flex-shrink-0 transform flex flex-col space-y-4 overflow-y-auto">
             <div class="text-center pb-4 border-b border-gray-700">
                 <h1 class="font-teko text-4xl font-bold tracking-widest text-white uppercase">NÓMADAS</h1>
@@ -59,7 +58,6 @@
                 <h2 class="font-teko text-2xl tracking-wider text-white">UNIDADES</h2>
                 <div>
                     <h3 class="font-teko text-xl text-gray-400 mb-2">Equipo</h3>
-                    <!-- Cuadrícula de equipos completa (4x3) -->
                     <div id="team-selection" class="grid grid-cols-4 gap-2">
                         <button class="team-btn control-btn active aspect-square bg-red-600 rounded-lg shadow-md hover:bg-red-500 transition" data-team="team1" title="Equipo 1"></button>
                         <button class="team-btn control-btn aspect-square bg-blue-600 rounded-lg shadow-md hover:bg-blue-500 transition" data-team="team2" title="Equipo 2"></button>
@@ -79,17 +77,17 @@
                     <h3 class="font-teko text-xl text-gray-400 mb-2">Rol Táctico</h3>
                     <div id="role-selection" class="grid grid-cols-4 gap-2">
                          <button class="role-btn control-btn active flex items-center justify-center p-3 bg-gray-800 rounded-lg shadow-md hover:bg-gray-700 transition" data-role="espada" title="Ataque">
-                            <svg class="pointer-events-none" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5l-5-5 5-5m-5 5h10"></path></svg>
-                        </button>
-                        <button class="role-btn control-btn flex items-center justify-center p-3 bg-gray-800 rounded-lg shadow-md hover:bg-gray-700 transition" data-role="escudo" title="Defensa">
-                             <svg class="pointer-events-none" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                        </button>
-                        <button class="role-btn control-btn flex items-center justify-center p-3 bg-gray-800 rounded-lg shadow-md hover:bg-gray-700 transition" data-role="estrella" title="Especial">
-                             <svg class="pointer-events-none" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                        </button>
-                        <button class="role-btn control-btn flex items-center justify-center p-3 bg-gray-800 rounded-lg shadow-md hover:bg-gray-700 transition" data-role="bandera" title="Objetivo">
-                            <svg class="pointer-events-none" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>
-                        </button>
+                             <svg class="pointer-events-none" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5l-5-5 5-5m-5 5h10"></path></svg>
+                         </button>
+                         <button class="role-btn control-btn flex items-center justify-center p-3 bg-gray-800 rounded-lg shadow-md hover:bg-gray-700 transition" data-role="escudo" title="Defensa">
+                              <svg class="pointer-events-none" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                         </button>
+                         <button class="role-btn control-btn flex items-center justify-center p-3 bg-gray-800 rounded-lg shadow-md hover:bg-gray-700 transition" data-role="estrella" title="Especial">
+                               <svg class="pointer-events-none" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                         </button>
+                         <button class="role-btn control-btn flex items-center justify-center p-3 bg-gray-800 rounded-lg shadow-md hover:bg-gray-700 transition" data-role="bandera" title="Objetivo">
+                             <svg class="pointer-events-none" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>
+                         </button>
                     </div>
                 </div>
             </div>
@@ -99,11 +97,17 @@
             <div>
                  <h2 class="font-teko text-2xl tracking-wider text-white">ACCIONES</h2>
                  <div id="tool-selection" class="grid grid-cols-2 gap-3">
-                    <button class="tool-btn control-btn active flex items-center justify-center space-x-2 w-full p-3 bg-gray-800 rounded-lg shadow-md hover:bg-gray-700 transition" data-tool="add"><span class="pointer-events-none">Añadir</span></button>
-                    <button class="tool-btn control-btn flex items-center justify-center space-x-2 w-full p-3 bg-gray-800 rounded-lg shadow-md hover:bg-gray-700 transition" data-tool="arrow"><span class="pointer-events-none">Ruta</span></button>
-                    <button class="tool-btn control-btn flex items-center justify-center space-x-2 w-full p-3 bg-gray-800 rounded-lg shadow-md hover:bg-gray-700 transition" data-tool="move"><span class="pointer-events-none">Mover</span></button>
-                    <button class="tool-btn control-btn flex items-center justify-center space-x-2 w-full p-3 bg-gray-800 rounded-lg shadow-md hover:bg-gray-700 transition" data-tool="erase"><span class="pointer-events-none">Borrar</span></button>
-                    <button id="clearAll" class="col-span-2 w-full p-3 bg-red-800/80 text-white rounded-lg shadow-md hover:bg-red-700 transition font-bold">LIMPIAR TODO</button>
+                     <button class="tool-btn control-btn active flex items-center justify-center space-x-2 w-full p-3 bg-gray-800 rounded-lg shadow-md hover:bg-gray-700 transition" data-tool="add"><span class="pointer-events-none">Añadir</span></button>
+                     <button class="tool-btn control-btn flex items-center justify-center space-x-2 w-full p-3 bg-gray-800 rounded-lg shadow-md hover:bg-gray-700 transition" data-tool="arrow"><span class="pointer-events-none">Ruta</span></button>
+                     
+                     <button class="tool-btn control-btn flex items-center justify-center space-x-2 w-full p-3 bg-gray-800 rounded-lg shadow-md hover:bg-gray-700 transition" data-tool="pencil">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="pointer-events-none"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                        <span class="pointer-events-none">Lápiz</span>
+                     </button>
+
+                     <button class="tool-btn control-btn flex items-center justify-center space-x-2 w-full p-3 bg-gray-800 rounded-lg shadow-md hover:bg-gray-700 transition" data-tool="move"><span class="pointer-events-none">Mover</span></button>
+                     <button class="tool-btn control-btn flex items-center justify-center space-x-2 w-full p-3 bg-gray-800 rounded-lg shadow-md hover:bg-gray-700 transition" data-tool="erase"><span class="pointer-events-none">Borrar</span></button>
+                     <button id="clearAll" class="col-span-2 w-full p-3 bg-red-800/80 text-white rounded-lg shadow-md hover:bg-red-700 transition font-bold">LIMPIAR TODO</button>
                  </div>
             </div>
         </div>
@@ -116,7 +120,6 @@
             </button>
             <canvas id="mapCanvas" class="rounded-lg shadow-2xl"></canvas>
             <p id="placeholder-text" class="font-teko text-4xl text-gray-500 absolute tracking-wider">CARGANDO MAPA...</p>
-            <!-- Ayuda visual para la navegación del mapa -->
             <div id="map-hint" class="absolute bottom-4 right-4 bg-gray-900/50 text-white text-sm px-3 py-2 rounded-lg backdrop-blur-sm pointer-events-none hidden">
                 <p><strong>Rueda del ratón:</strong> Zoom</p>
                 <p><strong>Arrastrar mapa:</strong> Mover</p>
@@ -138,14 +141,14 @@
         const mapUpload = document.getElementById('map-upload');
         const mapHint = document.getElementById('map-hint');
 
-        // ¡REEMPLAZA ESTA URL! Pon aquí el enlace a tu mapa gigante por defecto.
-        // Puedes subir la imagen a un servicio como Imgur y pegar el enlace directo aquí.
-        const defaultMapUrl = 'https://i.imgur.com/M8IPbHE.png'; 
+        // === IMPORTANTE: Guarda tu imagen como "mapa.png" en la misma carpeta que este archivo HTML ===
+        const defaultMapUrl = 'mapa.png';
 
         // --- State Variables ---
         let mapImage = null;
         let pieces = [];
         let arrows = [];
+        let pencilLines = []; 
         let currentTool = 'add';
         let currentTeam = 'team1';
         let currentRole = 'espada';
@@ -154,6 +157,7 @@
         let draggedPieceIndex = -1;
         
         let isDrawingArrow = false;
+        let isDrawingPencil = false; 
 
         let scale = 1.0;
         let viewOffset = { x: 0, y: 0 };
@@ -174,12 +178,12 @@
                 team3: 'rgba(22, 163, 74, 1)',
                 team4: 'rgba(234, 179, 8, 1)',
                 team5: 'rgba(139, 92, 246, 1)',
-                team6: 'rgba(249, 115, 22, 1)', // Orange
-                team7: 'rgba(236, 72, 153, 1)', // Pink
-                team8: 'rgba(229, 231, 235, 1)', // White/Light Gray
-                team9: 'rgba(17, 24, 39, 1)',     // Black
-                team10: 'rgba(252, 211, 77, 1)',  // Gold
-                team11: 'rgba(156, 163, 175, 1)', // Silver
+                team6: 'rgba(249, 115, 22, 1)',
+                team7: 'rgba(236, 72, 153, 1)',
+                team8: 'rgba(229, 231, 235, 1)',
+                team9: 'rgba(17, 24, 39, 1)',
+                team10: 'rgba(252, 211, 77, 1)',
+                team11: 'rgba(156, 163, 175, 1)',
                 objective: 'rgba(6, 182, 212, 1)',
             },
             roleShapes: {
@@ -190,7 +194,6 @@
             }
         };
         
-        // --- Map Loading ---
         mapUpload.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file && file.type.startsWith('image/')) {
@@ -209,6 +212,7 @@
             mapHint.classList.add('hidden');
 
             mapImage = new Image();
+
             mapImage.onload = () => {
                 placeholderText.style.display = 'none';
                 canvas.style.display = 'block';
@@ -228,16 +232,17 @@
                 
                 pieces = [];
                 arrows = [];
+                pencilLines = [];
 
                 if(animationFrameId) cancelAnimationFrame(animationFrameId);
                 animate();
             };
             mapImage.onerror = () => {
-                placeholderText.textContent = `Error al cargar el mapa.`;
+                // Modificado para dar una mejor pista si falla la carga local
+                placeholderText.textContent = `Error al cargar. ¿Existe "mapa.png" en la carpeta?`;
             };
             mapImage.src = source;
         }
-
 
         function animate() {
             draw();
@@ -254,6 +259,20 @@
                 ctx.drawImage(mapImage, 0, 0, mapImage.width, mapImage.height);
             }
             
+            pencilLines.forEach(line => {
+                if (line.points.length < 2) return;
+                ctx.strokeStyle = line.color;
+                ctx.lineWidth = 3 / scale;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.beginPath();
+                ctx.moveTo(line.points[0].x, line.points[0].y);
+                for (let i = 1; i < line.points.length; i++) {
+                    ctx.lineTo(line.points[i].x, line.points[i].y);
+                }
+                ctx.stroke();
+            });
+
             arrows.forEach(arrow => {
                 drawArrow(arrow.start, arrow.end, pieceConfig.teamColors[arrow.team], 4 / scale);
             });
@@ -280,13 +299,12 @@
                 ctx.fill();
                 ctx.stroke();
 
-                ctx.shadowBlur = 0; // Reset shadow for next element
+                ctx.shadowBlur = 0;
             });
 
             ctx.restore();
         }
         
-        // --- Drawing Helpers ---
         function drawArrow(start, end, color, lineWidth) {
             const headlen = 10 / scale;
             const dx = end.x - start.x;
@@ -352,7 +370,6 @@
             ctx.closePath();
         }
 
-        // --- UI Event Handlers ---
         panelToggle.addEventListener('click', () => {
             isPanelVisible = !isPanelVisible;
             controlsPanel.classList.toggle('-translate-x-full');
@@ -391,16 +408,16 @@
         clearAllButton.addEventListener('click', () => {
             pieces = [];
             arrows = [];
+            pencilLines = []; 
             if(mapImage) draw();
         });
         
         function updateCursor() {
             if (currentTool === 'move') canvas.style.cursor = 'grab';
-            else if (currentTool === 'erase' || currentTool === 'arrow') canvas.style.cursor = 'crosshair';
+            else if (currentTool === 'erase' || currentTool === 'arrow' || currentTool === 'pencil') canvas.style.cursor = 'crosshair';
             else canvas.style.cursor = 'pointer';
         }
 
-        // --- Canvas Interaction ---
         function getMouseWorldPos(e) {
             const rect = canvas.getBoundingClientRect();
             const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -420,13 +437,27 @@
             return -1;
         }
 
+        function findPencilLineAt(worldX, worldY) {
+            const hitRadius = 10 / scale; 
+            for (let i = pencilLines.length - 1; i >= 0; i--) {
+                const line = pencilLines[i];
+                for (const point of line.points) {
+                    const dist = Math.sqrt((worldX - point.x)**2 + (worldY - point.y)**2);
+                    if (dist < hitRadius) {
+                        return i; 
+                    }
+                }
+            }
+            return -1; 
+        }
+
         function handleStart(e) {
             if (!mapImage) return;
             e.preventDefault();
             const { x: worldX, y: worldY } = getMouseWorldPos(e);
-            const pieceIndex = findPieceAt(worldX, worldY);
-
+            
             if (currentTool === 'move') {
+                const pieceIndex = findPieceAt(worldX, worldY);
                 if (pieceIndex !== -1) {
                     isDraggingPiece = true;
                     draggedPieceIndex = pieceIndex;
@@ -439,12 +470,26 @@
                     };
                 }
             } else if (currentTool === 'erase') {
-                if (pieceIndex !== -1) pieces.splice(pieceIndex, 1);
+                const pieceIndex = findPieceAt(worldX, worldY);
+                if (pieceIndex !== -1) {
+                    pieces.splice(pieceIndex, 1);
+                } else {
+                    const lineIndex = findPencilLineAt(worldX, worldY);
+                    if (lineIndex !== -1) {
+                        pencilLines.splice(lineIndex, 1);
+                    }
+                }
             } else if (currentTool === 'add') {
                 pieces.push({ x: worldX, y: worldY, type: `${currentTeam}-${currentRole}` });
             } else if (currentTool === 'arrow') {
                 isDrawingArrow = true;
                 arrows.push({ start: {x: worldX, y: worldY}, end: {x: worldX, y: worldY}, team: currentTeam });
+            } else if (currentTool === 'pencil') {
+                isDrawingPencil = true;
+                pencilLines.push({ 
+                    points: [{x: worldX, y: worldY}], 
+                    color: pieceConfig.teamColors[currentTeam] 
+                });
             }
         }
 
@@ -464,6 +509,8 @@
                 panStart = { x: clientX, y: clientY };
             } else if (isDrawingArrow) {
                 arrows[arrows.length - 1].end = { x: worldX, y: worldY };
+            } else if (isDrawingPencil) {
+                pencilLines[pencilLines.length - 1].points.push({ x: worldX, y: worldY });
             }
         }
 
@@ -473,6 +520,7 @@
             isDraggingPiece = false;
             isPanning = false;
             isDrawingArrow = false;
+            isDrawingPencil = false; 
             draggedPieceIndex = -1;
             updateCursor();
         }
@@ -498,7 +546,6 @@
             scale = newScale;
         });
 
-        // --- Mouse & Touch Listeners ---
         canvas.addEventListener('mousedown', handleStart);
         canvas.addEventListener('mousemove', handleMove);
         canvas.addEventListener('mouseup', handleEnd);
@@ -508,7 +555,6 @@
         canvas.addEventListener('touchend', handleEnd);
         canvas.addEventListener('touchcancel', handleEnd);
 
-        // --- Window & Init ---
         function resizeCanvas() {
             if (!mapContainer) return;
             canvas.width = mapContainer.clientWidth;
@@ -520,10 +566,8 @@
         resizeCanvas();
         updateCursor();
 
-        // Cargar el mapa por defecto al iniciar la aplicación
         loadMapFromSource(defaultMapUrl);
 
-        // Deshabilitar menú contextual
         document.addEventListener('contextmenu', event => event.preventDefault());
     });
     </script>
